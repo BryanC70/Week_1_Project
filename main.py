@@ -1,9 +1,13 @@
-from  pyyoutube import Api
+from googleapiclient.discovery import build
 
-API_KEY = "AIzaSyCklFcu9yBlbmh3FQQFB7Jcndps5U35_zc"
-api = Api(api_key=API_KEY)
-api.get_authorization_url()
+api_key = "AIzaSyCklFcu9yBlbmh3FQQFB7Jcndps5U35_zc"
+youtube = build('youtube', 'v3', developerKey=api_key)
 
-playlists_by_id = api.get_playlist_by_id(playlist_id="PLOU2XLYxmsIKpaV8h0AGE05so0fAwwfTw")
-playlists_by_id.items
-print(playlists_by_id.items)
+request = youtube.channels().list(
+  part = 'statistics',
+  forUsername='sentdex'
+)
+
+response = request.execute()
+
+print(response)
