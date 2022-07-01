@@ -1,13 +1,27 @@
 from googleapiclient.discovery import build
+import requests
+import json
 
-api_key = "AIzaSyCklFcu9yBlbmh3FQQFB7Jcndps5U35_zc"
-youtube = build('youtube', 'v3', developerKey=api_key)
+class YTstats:
+  def __init__(self,api_key,channel_id):
+    self.api_key = api_key
+    self.channel_id = channel_id
+    self.channel_statistics = None
 
-request = youtube.channels().list(
-  part = 'statistics',
-  forUsername='sentdex'
-)
+  def get_channel_statistics(self):
+    url = f'https://www.googleapis.com/youtube/v3/channels?part=statistics&id={self.channel_id}&key={self.api_key}'
+    json_url = requests.get(url)
+    data = json.loads(json_url.text)
+    try: 
+      data = data["items"][0]['statistics']
+    except:
+      data = None
+    return data
 
-response = request.execute()
+API_KEY = "AIzaSyCklFcu9yBlbmh3FQQFB7Jcndps5U35_zc"
+youtube = build('youtube', 'v3', developerKey=API_KEY)
+channelId = 'UCenK8SmNW_vOKmDUTjbjamw'
 
-print(response)
+yt = YTstats(API_KEY, channelId)
+data = yt.get_channel_statistics()
+print(data)
