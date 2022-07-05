@@ -1,6 +1,11 @@
 from googleapiclient.discovery import build
 import requests
 import json
+import os
+import pandas as pd
+import sqlalchemy as db 
+import sqlalchemy as create_engine
+
 
 class YTstats:
   def __init__(self,api_key,channel_id):
@@ -25,3 +30,16 @@ channelId = 'UCenK8SmNW_vOKmDUTjbjamw'
 yt = YTstats(API_KEY, channelId)
 data = yt.get_channel_statistics()
 print(data)
+
+df = pd.DataFrame.from_dict(
+  data,
+  orient='index',
+  columns=['Channel Data'])
+engine = db.create_engine('sqlite:///data_base_name.db')
+df.to_sql(
+  'data',con=engine, 
+  if_exists='replace',
+  index=False)
+query_result = engine.execute('SELECT * FROM data;').fetchall()
+print(pd.DataFrame(query_result))
+
